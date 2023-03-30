@@ -1,6 +1,5 @@
 import java.time.LocalDate
 import kotlin.random.Random
-import kotlinx.coroutines.*
 fun getRandomInstance(): Random {
     return Random
 }
@@ -77,21 +76,18 @@ class Manage {
         fun getPassword(userId: Int): String {
             return data.getPassword(userId).toString()
         }
-        suspend fun closeAccount(user: User): Boolean {
-            val result  = GlobalScope.async{
-                val taskLists: List<TaskList?> = data.getTaskListsByUserId(user.userId)
-                for (taskList in taskLists) {
-                    for (task in taskList!!.tasks) data.deleteSharedTasksByTaskId(task.taskId)
-                    data.deleteTasksByTaskListId(taskList.taskListId)
-                    data.deleteSharedTaskListByTaskListId(taskList.taskListId)
-                }
-                data.deleteSharedTasksByUserId(user.userId)
-                data.deleteSharedTaskListsByUserId(user.userId)
-                data.deleteTaskListsByUserId(user.userId)
-                data.deleteUser(user)
-                true
+        fun closeAccount(user: User): Boolean {
+            val taskLists: List<TaskList?> = data.getTaskListsByUserId(user.userId)
+            for (taskList in taskLists) {
+                for (task in taskList!!.tasks) data.deleteSharedTasksByTaskId(task.taskId)
+                data.deleteTasksByTaskListId(taskList.taskListId)
+                data.deleteSharedTaskListByTaskListId(taskList.taskListId)
             }
-            return result.await()
+            data.deleteSharedTasksByUserId(user.userId)
+            data.deleteSharedTaskListsByUserId(user.userId)
+            data.deleteTaskListsByUserId(user.userId)
+            data.deleteUser(user)
+            return true
         }
         fun getTaskListByTaskListId(taskListId: Int): TaskList? {
             return data.getTaskListByTaskListId(taskListId)
@@ -109,15 +105,12 @@ class Manage {
             }
             return true
         }
-        suspend fun deleteTaskList(taskList:TaskList):Boolean{
-            val result : Deferred<Boolean> = GlobalScope.async {
-                for (task in taskList.tasks) data.deleteSharedTasksByTaskId(task.taskId)
-                data.deleteTasksByTaskListId(taskList.taskListId)
-                data.deleteSharedTaskListByTaskListId(taskList.taskListId)
-                data.deleteTaskListByTaskListId(taskList.taskListId)
-                true
-            }
-            return result.await()
+      fun deleteTaskList(taskList:TaskList):Boolean{
+            for (task in taskList.tasks) data.deleteSharedTasksByTaskId(task.taskId)
+            data.deleteTasksByTaskListId(taskList.taskListId)
+            data.deleteSharedTaskListByTaskListId(taskList.taskListId)
+            data.deleteTaskListByTaskListId(taskList.taskListId)
+            return  true
         }
         fun viewTaskOnPriority(tasks: MutableList<Task>): MutableList<Task?> {
             return tasks.sortedByDescending { it.priority } as MutableList<Task?>

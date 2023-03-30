@@ -1,4 +1,3 @@
-import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
@@ -108,10 +107,8 @@ fun manageTaskList(user:User){
         if(viewTaskList == ManageTaskList.EXIT) break
         when(viewTaskList){
             ManageTaskList.ADD_TASK_LIST -> {
-                GlobalScope.launch {
-                    if (Manage.addTaskList(user)) println("New taskList has been added to your account")
-                    else println("An error occurred while creating newTaskList, try again later")
-                }
+                if (Manage.addTaskList(user)) println("New taskList has been added to your account")
+                else println("An error occurred while creating newTaskList, try again later")
             }
             ManageTaskList.VIEW_TASK_LISTS -> taskListActions(user)
             ManageTaskList.VIEW_SHARED_TASK_LISTS ->
@@ -132,12 +129,9 @@ fun manageTaskList(user:User){
                 try {
                     val originalPassword: String = Manage.getPassword(user.userId)
                     Utility.checkPassWordConstraint(originalPassword, password)
-                    runBlocking {
-                        if (Manage.closeAccount(user)) {
-                            println("Account closed successfully")
-                            return@runBlocking
-                        } else println("An error occurred while closing the account")
-                    }
+                    if (Manage.closeAccount(user)) {
+                        println("Account closed successfully")
+                    } else println("An error occurred while closing the account")
                 } catch (e: InvalidDataException) {
                     println(e.message)
                 }
@@ -240,18 +234,18 @@ fun taskListActions(user:User){
                         }
                         val taskId: Int = getRandomInstance().nextInt(9999)
                         val task = Task(taskId, taskListId, title, description, priority,startDate, endDate,  category!!, period!!, ArrayList(), 0)
-                        GlobalScope.launch {
+
                             if (Manage.generateNewTasks(task, recurringNumber)) println("Task added successfully")
                             else println("An error occurred while adding the task")
-                        }
+
                     }
                     TaskListActions.DELETE_TASK_LIST -> {
-                        runBlocking {
+
                             if (Manage.deleteTaskList(taskList))
                                 println("TaskList deleted successfully")
                             else
                                println("An error occurred while deleting the taskList")
-                        }
+
                     }
                     TaskListActions.USE_TASK_LIST -> useTask(user, taskListId)
                     TaskListActions.VIEW_TASK -> viewTask(taskList.tasks)
