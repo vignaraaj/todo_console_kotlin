@@ -1,0 +1,3 @@
+enum class ManageTaskList(val manageTaskList:Int) {
+    ADD_TASK_LIST(1),VIEW_TASK_LISTS(2),VIEW_SHARED_TASK_LISTS(3),VIEW_SHARED_TASKS(4),CLOSE_ACCOUNT(5),EXIT(6)
+}

@@ -1,0 +1,3 @@
+enum class EditTaskLists(val editTaskListOption:Int) {
+    EDIT_SHARED_TASK_LIST(1),DELETE_SHARED_TASK_LIST(2),VIEW_TASKS_OF_SHARED_TASK_LIST(3),EXIT(4);
+}
